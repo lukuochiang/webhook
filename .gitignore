@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+node_modules_trash/
+package-lock.json
+
+# Build output
+dist/
+.wrangler/
+
+# Local secrets / env
+.dev.vars
+.env
+.env.*
+!.dev.vars.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Test coverage
+coverage/

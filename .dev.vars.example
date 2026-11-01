@@ -1,0 +1,26 @@
+# Copy this file to `.dev.vars` and fill in real values for local development.
+# `.dev.vars` is git-ignored and must NEVER be committed.
+
+# Admin API token. Required. Use a long random secret, e.g. `openssl rand -hex 32`.
+ADMIN_TOKEN=change-me-to-a-long-random-secret
+
+# Base URL used to build webhook receive URLs returned by the API.
+PUBLIC_BASE_URL=https://hook.fs.kg
+
+# Maximum request body size in bytes (default 512 KiB).
+MAX_BODY_SIZE=524288
+
+# Default history retention in days. 0 disables automatic cleanup.
+RETENTION_DAYS=7
+
+# Whether to record the source IP in captured events ("true" / "false").
+LOG_SOURCE_IP=true
+
+# Comma separated list of additional headers to redact.
+SENSITIVE_HEADERS=Authorization,Proxy-Authorization,Cookie,Set-Cookie
+
+# Require an Authorization: Bearer <token> header on top of the URL token ("true" / "false").
+WEBHOOK_AUTH_REQUIRED=false
+
+# Environment name, e.g. development / staging / production.
+APP_ENV=development

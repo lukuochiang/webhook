@@ -1,0 +1,32 @@
+{
+  "name": "webhook",
+  "version": "1.0.0",
+  "description": "Webhook Inbox & Inspector - a generic webhook receiver and debugger on Cloudflare Workers",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukuochiang/webhook.git"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "migrate:local": "wrangler d1 migrations apply webhook-db --local",
+    "migrate:remote": "wrangler d1 migrations apply webhook-db --remote",
+    "typecheck": "tsc --noEmit",
+    "test": "NODE_OPTIONS=--experimental-sqlite vitest run",
+    "test:watch": "vitest",
+    "build": "wrangler deploy --dry-run --outdir dist"
+  },
+  "dependencies": {
+    "hono": "^4.13.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "0.23.0",
+    "@cloudflare/workers-types": "^4.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "4.1.0",
+    "wrangler": "^4.0.0"
+  }
+}
