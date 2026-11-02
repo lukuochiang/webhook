@@ -58,7 +58,7 @@ docs/api.md                # API reference
 
 ## Requirements
 
-- Node.js ≥ 18 (tested on 22.x)
+- Node.js ≥ 22.5 (the test suite uses the built-in `node:sqlite`; 22.x recommended)
 - npm
 - Wrangler 4 (`npx wrangler --version`)
 - A Cloudflare account (only for production deploy; local dev needs nothing)
