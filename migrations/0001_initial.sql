@@ -1,5 +1,5 @@
 -- 0001_initial.sql
--- Core tables for Webhook Inbox & Inspector.
+-- Core tables for Webhook.
 
 CREATE TABLE IF NOT EXISTS webhook_endpoints (
   id              TEXT PRIMARY KEY,

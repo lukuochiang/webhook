@@ -1,4 +1,4 @@
-# Webhook Inbox — 官网 + Vercel 演示
+# Webhook — 官网 + Vercel 演示
 
 这是一个**自包含、零构建**的静态官网（Landing Page）与在线演示，用于部署到 Vercel 展示产品。
 它与仓库根目录的 Cloudflare Workers + D1 生产后端**完全独立**：这里用 Vercel 无服务器函数

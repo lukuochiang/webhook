@@ -1,6 +1,6 @@
 # Webhook — Inbox & Inspector
 
-A generic, self-hostable **Webhook Inbox & Inspector** that runs on [Cloudflare Workers](https://workers.cloudflare.com/). Any HTTP client (Stripe, GitHub, Shopify, CI systems, your own scripts…) can POST/GET/PUT/PATCH/DELETE to a unique URL you create, and the service will store the full request — headers, body, query string, method, source IP — for later inspection via a REST API.
+A generic, self-hostable **Webhook** receiver & inspector that runs on [Cloudflare Workers](https://workers.cloudflare.com/). Any HTTP client (Stripe, GitHub, Shopify, CI systems, your own scripts…) can POST/GET/PUT/PATCH/DELETE to a unique URL you create, and the service will store the full request — headers, body, query string, method, source IP — for later inspection via a REST API.
 
 > MVP focus: **receive → store → inspect → manage**. Built to be simple and stable today, while keeping clear extension points for dashboards, replay, R2 storage and forwarding later.
 

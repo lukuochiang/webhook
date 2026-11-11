@@ -1,4 +1,4 @@
-// Self-contained Vercel demo backend for the Webhook Inbox & Inspector.
+// Self-contained Vercel demo backend for the Webhook site.
 // Zero-build Node serverless function (catch-all) backed by in-memory storage.
 // NOTE: in-memory state is per warm instance and resets on cold starts — this is
 // fine for a showcase, not for production persistence (use the Cloudflare/D1

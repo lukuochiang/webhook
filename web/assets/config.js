@@ -1,7 +1,7 @@
 // Site-wide links and branding. Edit this file (no rebuild needed) to point the
 // marketing site at your own repository / deployment / docs.
 window.SITE_CONFIG = {
-  productName: 'Webhook Inbox',
+  productName: 'Webhook',
   github: 'https://github.com/lukuochiang/webhook',
   docs: 'https://github.com/lukuochiang/webhook/blob/main/docs/api.md',
   deploy:

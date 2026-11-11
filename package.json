@@ -1,7 +1,7 @@
 {
   "name": "webhook",
   "version": "1.0.0",
-  "description": "Webhook Inbox & Inspector - a generic webhook receiver and debugger on Cloudflare Workers",
+  "description": "Webhook - a generic webhook receiver and debugger on Cloudflare Workers",
   "type": "module",
   "license": "MIT",
   "repository": {

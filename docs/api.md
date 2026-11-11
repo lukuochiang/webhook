@@ -1,4 +1,4 @@
-# Webhook Inbox & Inspector — API Reference
+# Webhook — API Reference
 
 Base URL (production): `https://hook.fs.kg`
 Management API prefix: `/api/v1`

@@ -4,7 +4,7 @@ import { APP_VERSION, type AppEnv } from '../config/env'
 export const openApiSpec = {
   openapi: '3.1.0',
   info: {
-    title: 'Webhook Inbox & Inspector API',
+    title: 'Webhook API',
     version: APP_VERSION,
     description:
       'Generic webhook receiver and request inspector running on Cloudflare Workers. ' +
@@ -334,7 +334,7 @@ export function docsHandler(c: Context) {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Webhook Inbox &amp; Inspector - API Docs</title>
+  <title>Webhook - API Docs</title>
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
 </head>
 <body>

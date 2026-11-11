@@ -22,7 +22,7 @@ app.get('/', (c) =>
   jsonSuccess(
     c,
     {
-      name: 'Webhook Inbox & Inspector',
+      name: 'Webhook',
       version: APP_VERSION,
       docs: '/docs',
       openapi: '/api/v1/openapi.json',
