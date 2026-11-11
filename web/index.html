@@ -3,128 +3,450 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Webhook Inbox &amp; Inspector</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <title>Webhook Inbox &amp; Inspector — 捕获、检查、调试每一个 Webhook</title>
+    <meta name="description" content="开源通用的 Webhook 接收与调试工具。生成唯一 URL，捕获任意 HTTP 请求，实时查看请求头、请求体与来源，几秒钟定位回调问题。可自托管到 Cloudflare Workers 或 Vercel。" />
+    <meta property="og:title" content="Webhook Inbox & Inspector" />
+    <meta property="og:description" content="别再猜 Webhook 到底发来了什么。捕获、检查、调试每一个回调请求。" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235b8cff'/%3E%3Cpath d='M16 7v12m0 0-5-5m5 5 5-5M8 24h16' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./assets/landing.css" />
+    <script>document.documentElement.classList.add('js')</script>
   </head>
   <body>
-    <header class="topbar">
-      <div class="brand">
-        <span class="logo">⬇</span>
-        <div>
-          <h1>Webhook Inbox &amp; Inspector</h1>
-          <p class="tagline">通用 Webhook 接收与调试面板 · Vercel 演示</p>
+    <div class="bg-glow" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <!-- ===== Header ===== -->
+    <header class="site-header" id="site-header">
+      <div class="container nav">
+        <a class="brand" href="#top" aria-label="Webhook Inbox home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32" width="20" height="20"><path d="M16 6v13m0 0-5.5-5.5M16 19l5.5-5.5M7 25h18" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+          <span class="brand-name">Webhook<span>Inbox</span></span>
+        </a>
+
+        <nav class="nav-links" id="nav-links" aria-label="Main navigation">
+          <a href="#features" data-i18n="nav.features">产品特性</a>
+          <a href="#how" data-i18n="nav.how">工作原理</a>
+          <a href="#demo" data-i18n="nav.demo">在线演示</a>
+          <a href="#api" data-i18n="nav.api">API</a>
+          <a href="#faq" data-i18n="nav.faq">常见问题</a>
+        </nav>
+
+        <div class="nav-actions">
+          <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+          <a class="btn btn-ghost hide-sm" data-cfg-href="github" target="_blank" rel="noopener" data-i18n="nav.github">GitHub</a>
+          <a class="btn btn-primary btn-sm" href="#demo" data-i18n="nav.try">免费体验</a>
+          <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
         </div>
-      </div>
-      <div class="topbar-actions">
-        <span id="health" class="health" title="后端健康状态">●</span>
-        <button id="btn-stats" class="btn ghost">统计</button>
-        <button id="btn-settings" class="btn ghost">设置</button>
       </div>
     </header>
 
-    <!-- Endpoints view -->
-    <main id="view-endpoints" class="view">
-      <section class="panel">
-        <div class="panel-head">
-          <h2>创建端点</h2>
-          <button id="btn-toggle-create" class="btn small">展开 / 收起</button>
-        </div>
-        <form id="create-form" class="create-form">
-          <div class="grid">
-            <label>名称 *<input name="name" required placeholder="例如 Stripe 支付回调" /></label>
-            <label>鉴权模式
-              <select name="auth_mode">
-                <option value="url">URL Token（默认）</option>
-                <option value="header">Header Bearer</option>
-                <option value="both">两者都要</option>
-              </select>
-            </label>
-            <label>保留天数<input name="retention_days" type="number" min="0" max="3650" value="7" /></label>
-            <label class="checkbox">启用
-              <input name="enabled" type="checkbox" checked />
-            </label>
+    <main id="top">
+      <!-- ===== Hero ===== -->
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <a class="pill" data-cfg-href="github" target="_blank" rel="noopener">
+              <span class="pill-dot" aria-hidden="true"></span>
+              <span data-i18n="hero.badge">开源免费 · MIT 协议 · 可自托管</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+
+            <h1 data-i18n="hero.title">别再猜 Webhook<br />到底发来了<span class="gradient-text">什么</span></h1>
+
+            <p class="hero-sub" data-i18n="hero.sub">一个地址，接住所有回调。实时查看每一次请求的方法、请求头、请求体与来源，把「回调没生效」变成「一眼就看清」。</p>
+
+            <div class="hero-cta">
+              <a href="#demo" class="btn btn-primary btn-lg" data-i18n="hero.cta1">立即在线体验</a>
+              <a class="btn btn-outline btn-lg" data-cfg-href="github" target="_blank" rel="noopener" data-i18n="hero.cta2">查看源码</a>
+            </div>
+
+            <ul class="hero-checks">
+              <li data-i18n="hero.note1">无需注册，30 秒接入</li>
+              <li data-i18n="hero.note2">支持任意 HTTP 方法与子路径</li>
+              <li data-i18n="hero.note3">敏感请求头自动脱敏</li>
+            </ul>
           </div>
-          <label class="full">描述<textarea name="description" rows="2" placeholder="可选说明"></textarea></label>
-          <button type="submit" class="btn primary">创建端点</button>
-        </form>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="float-badge float-badge-1"><span class="fb-dot"></span> 200 OK</div>
+            <div class="float-badge float-badge-2">⚡ <span data-i18n="hero.float2">实时捕获</span></div>
+            <div class="mock-window">
+              <div class="mock-bar">
+                <span class="dots"><i></i><i></i><i></i></span>
+                <span class="mock-url">inbox / event detail</span>
+                <span class="mock-bar-tag">LIVE</span>
+              </div>
+              <div class="mock-body">
+                <div class="mock-req">
+                  <span class="method m-POST">POST</span>
+                  <span class="mock-path">/hook/f8a2…/payment/success</span>
+                  <span class="mock-time">just now</span>
+                </div>
+                <div class="mock-tabs"><span class="on">Body</span><span>Headers</span><span>Query</span></div>
+                <pre class="mock-code"><code><span class="c-punct">{</span>
+  <span class="c-key">"event"</span><span class="c-punct">:</span> <span class="c-str">"payment.succeeded"</span><span class="c-punct">,</span>
+  <span class="c-key">"order_id"</span><span class="c-punct">:</span> <span class="c-str">"ord_9f3a1c"</span><span class="c-punct">,</span>
+  <span class="c-key">"amount"</span><span class="c-punct">:</span> <span class="c-num">1999</span><span class="c-punct">,</span>
+  <span class="c-key">"currency"</span><span class="c-punct">:</span> <span class="c-str">"USD"</span><span class="c-punct">,</span>
+  <span class="c-key">"paid"</span><span class="c-punct">:</span> <span class="c-bool">true</span>
+<span class="c-punct">}</span></code></pre>
+                <div class="mock-meta">
+                  <span>content-type: application/json</span>
+                  <span>1.2 KB</span>
+                  <span>203.0.113.42</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container trust">
+          <span class="trust-label" data-i18n="hero.trust">适用于各种回调来源</span>
+          <div class="trust-items">
+            <span>Stripe</span><span>GitHub</span><span>Shopify</span><span>Slack</span>
+            <span>Twilio</span><span>Vercel</span><span>PayPal</span><span>Discord</span>
+          </div>
+        </div>
       </section>
 
-      <section class="panel">
-        <div class="panel-head">
-          <h2>我的端点</h2>
-          <button id="btn-refresh" class="btn small">刷新</button>
+      <!-- ===== Metrics ===== -->
+      <section class="metrics">
+        <div class="container metrics-inner">
+          <div class="metric"><div class="metric-n">7<span>×</span></div><div class="metric-l" data-i18n="metric.1">HTTP 方法全覆盖</div></div>
+          <div class="metric"><div class="metric-n">256<span>bit</span></div><div class="metric-l" data-i18n="metric.2">端点 Token 熵</div></div>
+          <div class="metric"><div class="metric-n">512<span>KB</span></div><div class="metric-l" data-i18n="metric.3">请求体上限可配</div></div>
+          <div class="metric"><div class="metric-n">0<span>¥</span></div><div class="metric-l" data-i18n="metric.4">开源自托管成本</div></div>
         </div>
-        <div id="endpoints-grid" class="endpoints-grid"></div>
-        <p id="endpoints-empty" class="empty">还没有端点，先创建一个吧。</p>
+      </section>
+
+      <!-- ===== Features ===== -->
+      <section class="section" id="features">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="eyebrow">FEATURES</span>
+            <h2 data-i18n="features.title">调试 Webhook 该有的，这里都有</h2>
+            <p data-i18n="features.sub">从接收、检查到清理，覆盖回调联调的完整链路，而不是只给你一个 RequestBin。</p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature reveal">
+              <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg></div>
+              <h3 data-i18n="f1.title">任意请求，照单全收</h3>
+              <p data-i18n="f1.desc">GET / POST / PUT / PATCH / DELETE 全支持，多级子路径与查询参数原样保留，不挑调用方。</p>
+            </article>
+            <article class="feature reveal">
+              <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h7" /><circle cx="18" cy="17" r="2.5" /></svg></div>
+              <h3 data-i18n="f2.title">完整请求快照</h3>
+              <p data-i18n="f2.desc">请求头、查询串、Content-Type、来源 IP、UA、原始请求体，一条不落地存下来。</p>
+            </article>
+            <article class="feature reveal">
+              <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m13-5h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3" /><path d="M9 12h6" /></svg></div>
+              <h3 data-i18n="f3.title">JSON 与二进制都能看</h3>
+              <p data-i18n="f3.desc">JSON 自动格式化并保留解析副本，文本 UTF-8 存储，二进制 Base64 无损保存。</p>
+            </article>
+            <article class="feature reveal">
+              <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></svg></div>
+              <h3 data-i18n="f4.title">安全默认开启</h3>
+              <p data-i18n="f4.desc">Token 仅存 SHA-256 哈希，Authorization / Cookie 等敏感头入库前脱敏，管理接口独立鉴权。</p>
+            </article>
+            <article class="feature reveal">
+              <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4" /></svg></div>
+              <h3 data-i18n="f5.title">检索、分页与统计</h3>
+              <p data-i18n="f5.desc">按端点、方法、时间筛选，分页浏览历史，一眼看清请求量趋势与活跃端点。</p>
+            </article>
+            <article class="feature reveal">
+              <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 6v6l4 2" /><circle cx="12" cy="12" r="9" /><path d="M19 4 4 19" /></svg></div>
+              <h3 data-i18n="f6.title">自动过期清理</h3>
+              <p data-i18n="f6.desc">定时任务按保留天数清理历史，支持每个端点单独覆盖，设为 0 即永久保留。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== How it works ===== -->
+      <section class="section section-alt" id="how">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="eyebrow">HOW IT WORKS</span>
+            <h2 data-i18n="how.title">三步，从零到看见请求</h2>
+            <p data-i18n="how.sub">不需要 SDK、不需要账号、不改一行业务代码。</p>
+          </div>
+          <div class="steps">
+            <div class="step reveal">
+              <div class="step-n">01</div>
+              <h3 data-i18n="how.s1.title">创建一个端点</h3>
+              <p data-i18n="how.s1.desc">起个名字，系统生成带 256-bit 随机 Token 的唯一 Webhook 地址。</p>
+              <div class="step-code">POST /api/v1/endpoints</div>
+            </div>
+            <div class="step-line" aria-hidden="true"></div>
+            <div class="step reveal">
+              <div class="step-n">02</div>
+              <h3 data-i18n="how.s2.title">把地址填给调用方</h3>
+              <p data-i18n="how.s2.desc">粘贴到 Stripe、GitHub 或任意平台的回调配置里，也可以直接用 curl 发一条。</p>
+              <div class="step-code">POST /hook/&lt;token&gt;</div>
+            </div>
+            <div class="step-line" aria-hidden="true"></div>
+            <div class="step reveal">
+              <div class="step-n">03</div>
+              <h3 data-i18n="how.s3.title">实时检查与排查</h3>
+              <p data-i18n="how.s3.desc">在收件箱里查看完整请求详情，定位签名、字段、编码或重试问题。</p>
+              <div class="step-code">GET /api/v1/events/:id</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Live Demo ===== -->
+      <section class="section" id="demo">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="eyebrow">LIVE DEMO</span>
+            <h2 data-i18n="demo.title">别只听我们说，现在就发一条</h2>
+            <p data-i18n="demo.sub">无需注册。生成一个临时地址，用下面任意方式发送 HTTP 请求，右侧收件箱会实时出现结果。</p>
+          </div>
+
+          <div class="demo-shell reveal">
+            <div class="demo-pane demo-setup">
+              <div class="pane-head">
+                <span class="pane-title" data-i18n="demo.setup">01 · 生成临时端点</span>
+                <span class="pane-tag">PUBLIC</span>
+              </div>
+
+              <div id="demo-intro" class="demo-intro">
+                <ol>
+                  <li data-i18n="demo.step1">点击按钮，创建一个 30 分钟有效的临时端点</li>
+                  <li data-i18n="demo.step2">复制地址，用 curl 或「发送示例请求」调用它</li>
+                  <li data-i18n="demo.step3">右侧收件箱自动刷新，点开即可查看完整快照</li>
+                </ol>
+              </div>
+
+              <button id="demo-create" class="btn btn-primary btn-block" type="button" data-i18n="demo.create">生成临时 Webhook 地址</button>
+
+              <div id="demo-url-wrap" class="demo-url-wrap hidden">
+                <label class="field-label" data-i18n="demo.urlLabel">你的 Webhook 地址</label>
+                <div class="copy-row">
+                  <code id="demo-url" class="copy-code"></code>
+                  <button id="demo-copy-url" class="btn btn-ghost btn-xs" type="button" data-i18n="demo.copy">复制</button>
+                </div>
+
+                <label class="field-label" data-i18n="demo.curlLabel">cURL 示例</label>
+                <div class="copy-row copy-row-pre">
+                  <pre id="demo-curl" class="copy-code"></pre>
+                  <button id="demo-copy-curl" class="btn btn-ghost btn-xs" type="button" data-i18n="demo.copy">复制</button>
+                </div>
+
+                <button id="demo-send" class="btn btn-outline btn-block" type="button" data-i18n="demo.send">发送示例请求</button>
+                <p class="demo-hint" data-i18n="demo.hint">临时端点 30 分钟后失效，数据存于内存且公开可读。请勿发送真实或敏感数据。</p>
+              </div>
+            </div>
+
+            <div class="demo-pane demo-inbox">
+              <div class="pane-head">
+                <span class="pane-title" data-i18n="demo.inbox">02 · 实时收件箱</span>
+                <span class="live-badge" id="live-badge"><i></i> LIVE</span>
+                <span class="pane-count" id="demo-count">0</span>
+              </div>
+              <div id="demo-events" class="demo-events">
+                <div class="demo-empty" id="demo-empty">
+                  <div class="demo-empty-icon" aria-hidden="true">◎</div>
+                  <p data-i18n="demo.empty">还没有收到请求</p>
+                  <span data-i18n="demo.emptyHint">生成地址并发送一条，结果会出现在这里</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="demo-foot reveal">
+            <span data-i18n="demo.full">想要完整能力？打开控制台管理端点、轮换 Token、筛选历史与查看统计。</span>
+            <a class="btn btn-ghost btn-sm" data-cfg-href="dashboard" data-i18n="demo.openApp">打开控制台 ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== API ===== -->
+      <section class="section section-alt" id="api">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="eyebrow">DEVELOPER FIRST</span>
+            <h2 data-i18n="api.title">干净、可预测的 REST API</h2>
+            <p data-i18n="api.sub">统一响应结构、标准状态码、完整 OpenAPI 3.1 文档，接进你的脚本或 CI 都很容易。</p>
+          </div>
+
+          <div class="api-layout">
+            <div class="code-card reveal">
+              <div class="code-tabs" role="tablist">
+                <button class="code-tab active" data-tab="curl" type="button">cURL</button>
+                <button class="code-tab" data-tab="js" type="button">JavaScript</button>
+                <button class="code-tab" data-tab="py" type="button">Python</button>
+                <button class="code-tab" data-tab="ts" type="button">TypeScript</button>
+                <button class="code-copy" id="code-copy" type="button" data-i18n="demo.copy">复制</button>
+              </div>
+              <div class="code-panels">
+                <pre class="code-panel active" data-panel="curl"><code># 创建一个端点
+curl -X POST https://your-domain/api/v1/endpoints \
+  -H "Authorization: Bearer $ADMIN_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"stripe-payments"}'
+
+# 查看最近收到的请求
+curl https://your-domain/api/v1/events?limit=20 \
+  -H "Authorization: Bearer $ADMIN_TOKEN"</code></pre>
+                <pre class="code-panel" data-panel="js"><code>const res = await fetch('/api/v1/endpoints', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer ' + token,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ name: 'stripe-payments' }),
+})
+
+const { data } = await res.json()
+console.log(data.webhook_url, data.token)</code></pre>
+                <pre class="code-panel" data-panel="py"><code>import requests
+
+r = requests.post(
+    'https://your-domain/api/v1/endpoints',
+    headers={'Authorization': 'Bearer ' + token},
+    json={'name': 'stripe-payments'},
+)
+r.raise_for_status()
+print(r.json()['data']['webhook_url'])</code></pre>
+                <pre class="code-panel" data-panel="ts"><code>interface Endpoint {
+  id: string
+  name: string
+  enabled: boolean
+  request_count: number
+}
+
+async function listEndpoints(token: string): Promise&lt;Endpoint[]&gt; {
+  const res = await fetch('/api/v1/endpoints', {
+    headers: { Authorization: 'Bearer ' + token },
+  })
+  const body = await res.json()
+  return body.data.items as Endpoint[]
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="api-list reveal">
+              <h3 data-i18n="api.listTitle">常用接口</h3>
+              <ul>
+                <li><span class="method m-POST">POST</span><code>/api/v1/endpoints</code><em data-i18n="api.e1">创建端点</em></li>
+                <li><span class="method m-GET">GET</span><code>/api/v1/endpoints</code><em data-i18n="api.e2">端点列表</em></li>
+                <li><span class="method m-POST">POST</span><code>/hook/:token/*</code><em data-i18n="api.e3">接收 Webhook</em></li>
+                <li><span class="method m-GET">GET</span><code>/api/v1/events</code><em data-i18n="api.e4">事件列表（筛选/分页）</em></li>
+                <li><span class="method m-GET">GET</span><code>/api/v1/events/:id</code><em data-i18n="api.e5">事件详情</em></li>
+                <li><span class="method m-DELETE">DELETE</span><code>/api/v1/events/:id</code><em data-i18n="api.e6">删除事件</em></li>
+                <li><span class="method m-GET">GET</span><code>/api/v1/stats</code><em data-i18n="api.e7">统计概览</em></li>
+                <li><span class="method m-GET">GET</span><code>/api/v1/openapi.json</code><em data-i18n="api.e8">OpenAPI 3.1 文档</em></li>
+              </ul>
+              <a class="text-link" data-cfg-href="docs" target="_blank" rel="noopener" data-i18n="api.docs">阅读完整 API 文档 ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Use cases ===== -->
+      <section class="section" id="usecases">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="eyebrow">USE CASES</span>
+            <h2 data-i18n="usecases.title">哪里需要回调，哪里就用得上</h2>
+            <p data-i18n="usecases.sub">一个通用收件箱，覆盖日常开发里最常踩的几类坑。</p>
+          </div>
+          <div class="usecase-grid">
+            <article class="usecase reveal"><div class="uc-n">01</div><h3 data-i18n="u1.title">支付与订单回调</h3><p data-i18n="u1.desc">核对 Stripe / PayPal 真实推送的字段、签名头与重试行为，不用反复翻平台日志。</p></article>
+            <article class="usecase reveal"><div class="uc-n">02</div><h3 data-i18n="u2.title">CI / Git 事件</h3><p data-i18n="u2.desc">在本地调试 GitHub、GitLab 的 push / PR webhook，看清 payload 结构再写处理逻辑。</p></article>
+            <article class="usecase reveal"><div class="uc-n">03</div><h3 data-i18n="u3.title">第三方集成联调</h3><p data-i18n="u3.desc">给合作方一个临时地址，确认他们到底发了什么、发了几次、编码对不对。</p></article>
+            <article class="usecase reveal"><div class="uc-n">04</div><h3 data-i18n="u4.title">本地开发无公网 IP</h3><p data-i18n="u4.desc">免去内网穿透，部署一份就能从任何地方接收并回看请求。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Deploy band ===== -->
+      <section class="deploy-band">
+        <div class="container deploy-inner reveal">
+          <div>
+            <span class="eyebrow">OPEN SOURCE</span>
+            <h2 data-i18n="deploy.title">代码是你的，数据也是你的</h2>
+            <p data-i18n="deploy.sub">MIT 协议开源。既能一键部署到 Vercel 做展示，也能用 Cloudflare Workers + D1 跑一套带持久化的生产实例。</p>
+          </div>
+          <div class="deploy-actions">
+            <a class="btn btn-primary btn-lg" data-cfg-href="deploy" target="_blank" rel="noopener" data-i18n="deploy.btn">一键部署到 Vercel</a>
+            <a class="btn btn-outline btn-lg" data-cfg-href="github" target="_blank" rel="noopener" data-i18n="deploy.repo">克隆仓库</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== FAQ ===== -->
+      <section class="section" id="faq">
+        <div class="container faq-wrap">
+          <div class="section-head reveal">
+            <span class="eyebrow">FAQ</span>
+            <h2 data-i18n="faq.title">常见问题</h2>
+          </div>
+          <div class="faq-list reveal">
+            <details><summary data-i18n="faq.q1">这个在线演示的数据会保存多久？</summary><p data-i18n="faq.a1">首页 Live Demo 使用公开的临时端点，30 分钟后自动失效，数据仅保存在内存中、冷启动即清空，且任何拿到地址的人都能查看。请勿发送真实或敏感数据。正式使用请自托管。</p></details>
+            <details><summary data-i18n="faq.q2">与 RequestBin / Webhook.site 有什么不同？</summary><p data-i18n="faq.a2">核心能力相近，但本项目完全开源可自托管，数据留在你自己的 Cloudflare D1 或服务器里；同时提供端点管理、Token 轮换、保留策略与 OpenAPI 文档，方便接进内部工具链。</p></details>
+            <details><summary data-i18n="faq.q3">生产环境需要付费吗？</summary><p data-i18n="faq.a3">不需要。主方案运行在 Cloudflare Workers + D1 免费额度内，不需要 Workers Paid 功能。本演示站点可部署在 Vercel 免费计划。</p></details>
+            <details><summary data-i18n="faq.q4">Token 和敏感信息怎么处理？</summary><p data-i18n="faq.a4">端点 Token 是 256-bit 随机值，数据库只保存 SHA-256 哈希，明文仅在创建或轮换时返回一次。Authorization、Cookie 等敏感请求头在入库前就会被替换为 [redacted]。</p></details>
+            <details><summary data-i18n="faq.q5">支持多大的请求体？可以永久保留吗？</summary><p data-i18n="faq.a5">默认上限 512 KB，可通过 MAX_BODY_SIZE 调整，超限返回 413。默认按 RETENTION_DAYS 定时清理；把单个端点的 retention_days 设为 0 即可跳过自动清理。</p></details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Final CTA ===== -->
+      <section class="final-cta">
+        <div class="container final-inner reveal">
+          <h2 data-i18n="final.title">准备好看清下一个 Webhook 了吗？</h2>
+          <p data-i18n="final.sub">不用注册，从上面的在线演示开始；满意了再花五分钟部署一份自己的。</p>
+          <div class="hero-cta">
+            <a href="#demo" class="btn btn-primary btn-lg" data-i18n="final.btn">立即在线体验</a>
+            <a class="btn btn-outline btn-lg" data-cfg-href="github" target="_blank" rel="noopener" data-i18n="deploy.repo">克隆仓库</a>
+          </div>
+        </div>
       </section>
     </main>
 
-    <!-- Events view -->
-    <main id="view-events" class="view hidden">
-      <div class="events-bar">
-        <button id="btn-back" class="btn ghost">← 返回端点</button>
-        <h2 id="events-title">事件</h2>
-        <span id="events-count" class="count"></span>
-      </div>
-      <div class="events-filter">
-        <label>方法
-          <select id="filter-method">
-            <option value="">全部</option>
-            <option>GET</option><option>POST</option><option>PUT</option>
-            <option>PATCH</option><option>DELETE</option><option>OPTIONS</option><option>HEAD</option>
-          </select>
-        </label>
-        <button id="btn-events-refresh" class="btn small">刷新</button>
-      </div>
-      <div id="events-list" class="events-list"></div>
-      <p id="events-empty" class="empty">该端点还没有收到任何请求。</p>
-      <div id="events-pager" class="pager"></div>
-    </main>
-
-    <!-- Event detail modal -->
-    <div id="modal" class="modal hidden">
-      <div class="modal-card">
-        <div class="modal-head">
-          <h3>事件详情</h3>
-          <button id="btn-modal-close" class="btn ghost small">✕</button>
+    <!-- ===== Footer ===== -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <a class="brand" href="#top">
+            <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="18" height="18"><path d="M16 6v13m0 0-5.5-5.5M16 19l5.5-5.5M7 25h18" stroke="currentColor" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+            <span class="brand-name">Webhook<span>Inbox</span></span>
+          </a>
+          <p data-i18n="footer.tagline">开源通用的 Webhook 接收与调试工具。捕获、检查、理解每一次回调。</p>
+          <span class="footer-status" id="footer-status"></span>
         </div>
-        <div id="modal-body" class="modal-body"></div>
-      </div>
-    </div>
-
-    <!-- Settings modal -->
-    <div id="settings-modal" class="modal hidden">
-      <div class="modal-card">
-        <div class="modal-head">
-          <h3>设置</h3>
-          <button id="btn-settings-close" class="btn ghost small">✕</button>
+        <div class="footer-col">
+          <h4 data-i18n="footer.product">产品</h4>
+          <a href="#features" data-i18n="nav.features">产品特性</a>
+          <a href="#demo" data-i18n="nav.demo">在线演示</a>
+          <a data-cfg-href="dashboard" data-i18n="nav.dashboard">控制台</a>
         </div>
-        <div class="modal-body">
-          <label class="full">API 地址（留空表示同源）
-            <input id="set-api-base" placeholder="例如 https://my-api.vercel.app" />
-          </label>
-          <label class="full">Admin Token
-            <input id="set-admin-token" placeholder="demo-admin-token" />
-          </label>
-          <p class="hint">演示后端默认 Admin Token 为 <code>demo-admin-token</code>。数据保存在内存中，冷启动会重置。</p>
-          <button id="btn-settings-save" class="btn primary">保存</button>
+        <div class="footer-col">
+          <h4 data-i18n="footer.resources">资源</h4>
+          <a data-cfg-href="docs" target="_blank" rel="noopener" data-i18n="api.docsShort">API 文档</a>
+          <a data-cfg-href="github" target="_blank" rel="noopener" data-i18n="nav.github">GitHub</a>
+          <a data-cfg-href="deploy" target="_blank" rel="noopener" data-i18n="deploy.btnShort">部署到 Vercel</a>
         </div>
       </div>
-    </div>
-
-    <!-- Stats modal -->
-    <div id="stats-modal" class="modal hidden">
-      <div class="modal-card">
-        <div class="modal-head">
-          <h3>统计</h3>
-          <button id="btn-stats-close" class="btn ghost small">✕</button>
-        </div>
-        <div id="stats-body" class="modal-body"></div>
+      <div class="container footer-bottom">
+        <span>© <span id="year"></span> Webhook Inbox · <span data-i18n="footer.license">MIT License</span></span>
+        <span data-i18n="footer.built">基于 Cloudflare Workers / D1 与 Vercel 构建</span>
       </div>
-    </div>
+    </footer>
 
-    <div id="toast" class="toast hidden"></div>
+    <div class="toast hidden" id="toast" role="status"></div>
 
-    <script src="./app.js"></script>
+    <script src="./assets/config.js"></script>
+    <script src="./assets/i18n.js"></script>
+    <script src="./assets/landing.js"></script>
   </body>
 </html>

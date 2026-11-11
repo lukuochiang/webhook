@@ -295,6 +295,19 @@ Free plan.
 
 ---
 
+## 官网与 Vercel 演示（独立部署）
+
+`web/` 目录包含一个**自包含、零构建**的产品官网 + 在线演示，可单独部署到 Vercel 展示。
+它用 Vercel 无服务器函数（纯 Node JS，内存存储）复刻了同一套 API 契约，与 Cloudflare 生产后端互不依赖，
+数据不持久、不共享。
+
+- `/`：中英双语官网（特性、工作原理、REST API 示例、使用场景、FAQ、部署引导），首页内嵌**可交互 Live Demo**——访客无需注册即可生成 30 分钟临时端点、发送请求并实时查看捕获结果。
+- `/app`：完整控制台（端点管理、事件检索与详情、统计、健康检查）。
+- 部署、本地预览与外链配置见 [`web/README.md`](./web/README.md)。
+- **仅用于展示**：内存存储会在冷启动时重置，请勿用于真实数据。
+
+---
+
 ## Security notes
 
 - Endpoint tokens are **256-bit** random values; only their **SHA-256 hash** is
@@ -316,7 +329,8 @@ Free plan.
 - Downstream **forwarding** + retries (Cloudflare Queues)
 - **R2** storage for large / binary payloads (the `StorageAdapter` interface is
   already in place)
-- Web Dashboard (Vue 3 + Vite), CLI & SDKs
+- Richer SPA dashboard (Vue 3 + Vite) — a static marketing site + dashboard already ships under `web/`
+- CLI & SDKs
 
 ---
 

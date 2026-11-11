@@ -14,6 +14,12 @@ const endpoints = new Map() // id -> endpoint
 const events = [] // newest-first array
 const tokenIndex = new Map() // tokenHash -> endpointId
 
+// Public Live Demo limits (the landing page lets anonymous visitors create a
+// throwaway endpoint; keep it bounded so it cannot be abused as free storage).
+const DEMO_TTL_MS = 30 * 60 * 1000
+const MAX_DEMO_ENDPOINTS = 60
+const MAX_DEMO_EVENTS = 20
+
 function sha256Hex(s) {
   return crypto.createHash('sha256').update(s).digest('hex')
 }
@@ -87,6 +93,62 @@ function toPublic(ep) {
   }
 }
 
+function eventToPublic(e) {
+  let headers = {}
+  try {
+    const parsed = JSON.parse(e.headers_json)
+    if (parsed && typeof parsed === 'object') headers = parsed
+  } catch {}
+  let body = null
+  if (e.body_encoding === 'base64' && e.body_data) {
+    try {
+      body = Buffer.from(e.body_data, 'base64').toString('utf8')
+    } catch {
+      body = null
+    }
+  } else {
+    body = e.body_data
+  }
+  return {
+    id: e.id,
+    endpoint_id: e.endpoint_id,
+    method: e.method,
+    path: e.path,
+    query_string: e.query_string,
+    headers,
+    content_type: e.content_type,
+    body,
+    body_json: e.body_json,
+    body_encoding: e.body_encoding,
+    body_size: e.body_size,
+    source_ip: e.source_ip,
+    user_agent: e.user_agent,
+    received_at: e.received_at,
+  }
+}
+
+function removeEndpoint(id) {
+  for (let i = events.length - 1; i >= 0; i--) {
+    if (events[i].endpoint_id === id) events.splice(i, 1)
+  }
+  const ep = endpoints.get(id)
+  if (ep) {
+    tokenIndex.delete(ep.token_hash)
+    endpoints.delete(id)
+  }
+}
+
+function pruneDemo() {
+  const now = Date.now()
+  for (const ep of [...endpoints.values()]) {
+    if (ep.demo && now - new Date(ep.created_at).getTime() > DEMO_TTL_MS) removeEndpoint(ep.id)
+  }
+  const demoEps = [...endpoints.values()]
+    .filter((ep) => ep.demo)
+    .sort((a, b) => (a.created_at < b.created_at ? -1 : 1))
+  while (demoEps.length > MAX_DEMO_ENDPOINTS) removeEndpoint(demoEps.shift().id)
+}
+
 async function handleCapture(req, res, url, path) {
   const rest = path.slice('/api/hook/'.length)
   const slash = rest.indexOf('/')
@@ -150,6 +212,17 @@ async function handleCapture(req, res, url, path) {
   ep.request_count += 1
   ep.last_received_at = event.received_at
   ep.updated_at = event.received_at
+  if (ep.demo) {
+    let seen = 0
+    for (let i = 0; i < events.length; i++) {
+      if (events[i].endpoint_id !== endpointId) continue
+      seen++
+      if (seen > MAX_DEMO_EVENTS) {
+        events.splice(i, 1)
+        i--
+      }
+    }
+  }
   return send(res, 200, { event_id: event.id, received_at: event.received_at })
 }
 
@@ -169,6 +242,56 @@ export default async function handler(req, res) {
 
   if (path.startsWith('/api/hook/')) {
     return handleCapture(req, res, url, path)
+  }
+
+  // ---- Public Live Demo (no admin token; anonymous, bounded, ephemeral) ----
+  if (path === '/api/demo/endpoint' && method === 'POST') {
+    pruneDemo()
+    const id = genId('ep')
+    const token = genToken()
+    const tokenHash = sha256Hex(token)
+    const now = nowIso()
+    const ep = {
+      id,
+      token_hash: tokenHash,
+      name: 'Live Demo',
+      description: null,
+      enabled: 1,
+      auth_mode: 'url',
+      retention_days: 0,
+      response_status: 200,
+      request_count: 0,
+      created_at: now,
+      updated_at: now,
+      last_received_at: null,
+      demo: true,
+    }
+    endpoints.set(id, ep)
+    ep.token = token
+    tokenIndex.set(tokenHash, id)
+    return send(res, 200, {
+      token,
+      webhook_url: buildWebhookUrl(token),
+      expires_at: new Date(Date.now() + DEMO_TTL_MS).toISOString(),
+    })
+  }
+
+  if (path === '/api/demo/events' && method === 'GET') {
+    const token = url.searchParams.get('token') || ''
+    const endpointId = token ? tokenIndex.get(sha256Hex(token)) : undefined
+    const ep = endpointId ? endpoints.get(endpointId) : undefined
+    if (!ep || !ep.demo) {
+      return send(res, 404, { error: 'NOT_FOUND', message: 'Demo endpoint not found or expired' })
+    }
+    const items = events
+      .filter((e) => e.endpoint_id === endpointId)
+      .slice(0, MAX_DEMO_EVENTS)
+      .map(eventToPublic)
+    return send(res, 200, {
+      items,
+      total: items.length,
+      expires_at: new Date(new Date(ep.created_at).getTime() + DEMO_TTL_MS).toISOString(),
+    })
   }
 
   // Everything else requires admin auth.
@@ -250,11 +373,7 @@ export default async function handler(req, res) {
       return send(res, 200, toPublic(ep))
     }
     if (method === 'DELETE' && !epMatch[2]) {
-      for (let i = events.length - 1; i >= 0; i--) {
-        if (events[i].endpoint_id === id) events.splice(i, 1)
-      }
-      tokenIndex.delete(ep.token_hash)
-      endpoints.delete(id)
+      removeEndpoint(id)
       return send(res, 200, { deleted: true })
     }
     if (method === 'POST' && epMatch[2]) {
@@ -302,37 +421,7 @@ export default async function handler(req, res) {
     const e = events.find((x) => x.id === id)
     if (!e) return send(res, 404, { error: 'NOT_FOUND', message: 'Event not found' })
     if (method === 'GET') {
-      let headers = {}
-      try {
-        const parsed = JSON.parse(e.headers_json)
-        if (parsed && typeof parsed === 'object') headers = parsed
-      } catch {}
-      let body = null
-      if (e.body_encoding === 'base64') {
-        try {
-          body = Buffer.from(e.body_data, 'base64').toString('utf8')
-        } catch {
-          body = null
-        }
-      } else {
-        body = e.body_data
-      }
-      return send(res, 200, {
-        id: e.id,
-        endpoint_id: e.endpoint_id,
-        method: e.method,
-        path: e.path,
-        query_string: e.query_string,
-        headers,
-        content_type: e.content_type,
-        body,
-        body_json: e.body_json,
-        body_encoding: e.body_encoding,
-        body_size: e.body_size,
-        source_ip: e.source_ip,
-        user_agent: e.user_agent,
-        received_at: e.received_at,
-      })
+      return send(res, 200, eventToPublic(e))
     }
     if (method === 'DELETE') {
       const idx = events.findIndex((x) => x.id === id)
