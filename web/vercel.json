@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/hook/(.*)", "destination": "/api/hook/$1" }
+  ],
+  "functions": {
+    "api/**/*.js": { "maxDuration": 10 }
+  }
+}

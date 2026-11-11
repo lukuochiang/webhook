@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Webhook Inbox &amp; Inspector</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">⬇</span>
+        <div>
+          <h1>Webhook Inbox &amp; Inspector</h1>
+          <p class="tagline">通用 Webhook 接收与调试面板 · Vercel 演示</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span id="health" class="health" title="后端健康状态">●</span>
+        <button id="btn-stats" class="btn ghost">统计</button>
+        <button id="btn-settings" class="btn ghost">设置</button>
+      </div>
+    </header>
+
+    <!-- Endpoints view -->
+    <main id="view-endpoints" class="view">
+      <section class="panel">
+        <div class="panel-head">
+          <h2>创建端点</h2>
+          <button id="btn-toggle-create" class="btn small">展开 / 收起</button>
+        </div>
+        <form id="create-form" class="create-form">
+          <div class="grid">
+            <label>名称 *<input name="name" required placeholder="例如 Stripe 支付回调" /></label>
+            <label>鉴权模式
+              <select name="auth_mode">
+                <option value="url">URL Token（默认）</option>
+                <option value="header">Header Bearer</option>
+                <option value="both">两者都要</option>
+              </select>
+            </label>
+            <label>保留天数<input name="retention_days" type="number" min="0" max="3650" value="7" /></label>
+            <label class="checkbox">启用
+              <input name="enabled" type="checkbox" checked />
+            </label>
+          </div>
+          <label class="full">描述<textarea name="description" rows="2" placeholder="可选说明"></textarea></label>
+          <button type="submit" class="btn primary">创建端点</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>我的端点</h2>
+          <button id="btn-refresh" class="btn small">刷新</button>
+        </div>
+        <div id="endpoints-grid" class="endpoints-grid"></div>
+        <p id="endpoints-empty" class="empty">还没有端点，先创建一个吧。</p>
+      </section>
+    </main>
+
+    <!-- Events view -->
+    <main id="view-events" class="view hidden">
+      <div class="events-bar">
+        <button id="btn-back" class="btn ghost">← 返回端点</button>
+        <h2 id="events-title">事件</h2>
+        <span id="events-count" class="count"></span>
+      </div>
+      <div class="events-filter">
+        <label>方法
+          <select id="filter-method">
+            <option value="">全部</option>
+            <option>GET</option><option>POST</option><option>PUT</option>
+            <option>PATCH</option><option>DELETE</option><option>OPTIONS</option><option>HEAD</option>
+          </select>
+        </label>
+        <button id="btn-events-refresh" class="btn small">刷新</button>
+      </div>
+      <div id="events-list" class="events-list"></div>
+      <p id="events-empty" class="empty">该端点还没有收到任何请求。</p>
+      <div id="events-pager" class="pager"></div>
+    </main>
+
+    <!-- Event detail modal -->
+    <div id="modal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>事件详情</h3>
+          <button id="btn-modal-close" class="btn ghost small">✕</button>
+        </div>
+        <div id="modal-body" class="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Settings modal -->
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>设置</h3>
+          <button id="btn-settings-close" class="btn ghost small">✕</button>
+        </div>
+        <div class="modal-body">
+          <label class="full">API 地址（留空表示同源）
+            <input id="set-api-base" placeholder="例如 https://my-api.vercel.app" />
+          </label>
+          <label class="full">Admin Token
+            <input id="set-admin-token" placeholder="demo-admin-token" />
+          </label>
+          <p class="hint">演示后端默认 Admin Token 为 <code>demo-admin-token</code>。数据保存在内存中，冷启动会重置。</p>
+          <button id="btn-settings-save" class="btn primary">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats modal -->
+    <div id="stats-modal" class="modal hidden">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>统计</h3>
+          <button id="btn-stats-close" class="btn ghost small">✕</button>
+        </div>
+        <div id="stats-body" class="modal-body"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
