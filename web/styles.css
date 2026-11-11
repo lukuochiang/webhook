@@ -242,3 +242,47 @@ body {
   color: var(--text); padding: 10px 16px; border-radius: 10px;
   font-size: 13px; box-shadow: var(--shadow); z-index: 100;
 }
+
+/* ============ theme toggle (one icon slot) ============ */
+.theme-toggle {
+  width: 36px; height: 32px; padding: 0;
+  display: inline-grid; place-items: center;
+  border: 1px solid var(--border); border-radius: 9px;
+  background: var(--panel-2); color: var(--muted);
+  cursor: pointer; transition: .15s;
+}
+.theme-toggle:hover { border-color: var(--primary); color: var(--text); }
+.theme-toggle svg { display: block; }
+
+/* ============ light theme ============ */
+html[data-theme='light'] {
+  --bg: #f7f8fc;
+  --bg-2: #f2f4f8;
+  --panel: #ffffff;
+  --panel-2: #f7f8fc;
+  --border: rgba(16, 24, 40, 0.12);
+  --text: #101828;
+  --muted: #475467;
+  --primary: #4f6fe0;
+  --primary-2: #3b5bdb;
+  --ok: #0e9f6e;
+  --danger: #d92d20;
+  --shadow: 0 6px 24px rgba(16, 24, 40, 0.10);
+}
+html[data-theme='light'] body { background: #f7f8fc; }
+html[data-theme='light'] .topbar { background: rgba(255, 255, 255, 0.82); }
+html[data-theme='light'] .badge.on {
+  color: var(--ok); border-color: rgba(14, 159, 110, 0.28); background: rgba(14, 159, 110, 0.09);
+}
+html[data-theme='light'] .btn.danger { border-color: rgba(217, 45, 32, 0.3); }
+html[data-theme='light'] .m-GET { background: rgba(23, 92, 211, .10); color: #175cd3; }
+html[data-theme='light'] .m-POST { background: rgba(6, 118, 71, .10); color: #067647; }
+html[data-theme='light'] .m-PUT, html[data-theme='light'] .m-PATCH { background: rgba(181, 71, 8, .10); color: #b54708; }
+html[data-theme='light'] .m-DELETE { background: rgba(180, 35, 49, .10); color: #b42318; }
+html[data-theme='light'] .m-OPTIONS, html[data-theme='light'] .m-HEAD { background: rgba(71, 84, 103, .10); color: #475467; }
+html[data-theme='light'] .json .str { color: #067647; }
+html[data-theme='light'] .json .num { color: #b54708; }
+html[data-theme='light'] .json .bool { color: #3538cd; }
+html[data-theme='light'] .json .null { color: #b42318; }
+html[data-theme='light'] .json .key { color: #175cd3; }
+html[data-theme='light'] .modal { background: rgba(16, 24, 40, 0.38); }

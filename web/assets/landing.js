@@ -69,6 +69,8 @@ function applyLang(next) {
 
   syncDemoButton()
   if (demo.token) renderDemoEvents(demo.events)
+  // Theme button tooltip follows the active language.
+  if (window.WhTheme) window.WhTheme.refresh()
 }
 
 /* ---------- helpers ---------- */

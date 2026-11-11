@@ -10,6 +10,8 @@
     <meta property="og:type" content="website" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236b8cff'/%3E%3Cg stroke='white' stroke-width='2.6' fill='none' stroke-linecap='round'%3E%3Cpath d='M16 11v7M16 18l-7 6M16 18l7 6'/%3E%3C/g%3E%3Cg fill='white'%3E%3Ccircle cx='16' cy='7.5' r='3'/%3E%3Ccircle cx='8' cy='25' r='3'/%3E%3Ccircle cx='24' cy='25' r='3'/%3E%3C/g%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./assets/landing.css" />
+    <meta name="theme-color" content="#070910" />
+    <script src="./assets/theme.js"></script>
     <script>document.documentElement.classList.add('js')</script>
   </head>
   <body>
@@ -36,6 +38,7 @@
 
         <div class="nav-actions">
           <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Switch language">EN</button>
+          <button class="theme-toggle" id="theme-toggle" type="button" title="跟随系统" aria-label="跟随系统" data-mode="system"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="12.5" rx="2" /><path d="M9 20h6M12 16.5V20" /></svg></button>
           <a class="btn btn-ghost hide-sm" data-cfg-href="github" target="_blank" rel="noopener" data-i18n="nav.github">GitHub</a>
           <a class="btn btn-primary btn-sm" href="#demo" data-i18n="nav.try">免费体验</a>
           <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">

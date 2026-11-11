@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard · Webhook</title>
     <link rel="stylesheet" href="./styles.css" />
+    <meta name="theme-color" content="#070910" />
+    <script src="./assets/theme.js"></script>
     <style>
       a.btn { display: inline-flex; align-items: center; text-decoration: none; }
     </style>
@@ -20,6 +22,7 @@
       </div>
       <div class="topbar-actions">
         <a class="btn ghost" href="./">← 返回官网</a>
+        <button class="theme-toggle" id="theme-toggle" type="button" title="跟随系统" aria-label="跟随系统" data-mode="system"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="12.5" rx="2" /><path d="M9 20h6M12 16.5V20" /></svg></button>
         <span id="health" class="health" title="后端健康状态">●</span>
         <button id="btn-stats" class="btn ghost">统计</button>
         <button id="btn-settings" class="btn ghost">设置</button>
