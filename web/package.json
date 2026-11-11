@@ -1,0 +1,7 @@
+{
+  "name": "webhook-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Webhook marketing site and zero-build Vercel demo functions"
+}

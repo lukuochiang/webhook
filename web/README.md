@@ -18,7 +18,8 @@ web/
     config.js           站点外链与品牌配置 ← 部署前改这里
     theme.js            三态主题控制器（跟随系统 / 日间 / 夜间）
   api/[...slug].js      Vercel 无服务器 catch-all 函数
-  vercel.json           /app 与 /hook/* 重写
+  package.json          独立 npm project root（零依赖，隔离仓库根的 Cloudflare 依赖）
+  vercel.json           installCommand + /app 与 /hook/* 重写
   README.md
 ```
 
@@ -82,6 +83,37 @@ vercel --prod        # 生产部署
 
 部署后首页 `https://<项目>.vercel.app`，控制台 `/app`，Webhook 地址 `/hook/<token>`（由
 `vercel.json` 重写到 `/api/hook/*`）。
+
+### 依赖隔离（部署排错）
+
+`web/` 自带一个**零依赖**的 `package.json`，`vercel.json` 也显式指定了：
+
+```json
+{
+  "installCommand": "npm install --ignore-scripts --no-audit --no-fund"
+}
+```
+
+原因：`web/` 若没有 `package.json`，Vercel 在 Root Directory = `web` 下执行 `npm install` 时，
+npm 会向上查找到仓库根目录的 `package.json`，于是去安装 Cloudflare Workers 主项目整棵依赖树。
+而 `wrangler@4.x` 声明了 `peerOptional @cloudflare/workers-types@^5`（如 `^5.20261110.1`），
+根目录仍固定 `^4`，因此报 `ERESOLVE` 并以
+`[BUILD_UTILS_SPAWN_1] Command "npm install" exited with 1` 失败——**与官网代码无关**。
+
+有了独立的 `web/package.json`，npm 的 project root 就停在 `web/`，安装零依赖、立即完成。
+仓库根的 `.npmrc`（`legacy-peer-deps=true`）是双保险：万一 Vercel 在根层安装，也不会被
+peerOptional 冲突中断；它同时让主项目本地 `npm install` 跳过严格 peer 校验。
+
+本地复现与验证：
+
+```bash
+cd web
+npm install --ignore-scripts --no-audit --no-fund   # exit 0
+npm ls --depth=0                                    # (empty)
+```
+
+> 注意：`api/[...slug].js` 使用 ESM（`import` / `export default`），因此 `web/package.json`
+> 里的 `"type": "module"` 不能删。
 
 ### 本地预览
 
